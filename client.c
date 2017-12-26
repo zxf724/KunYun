@@ -112,6 +112,9 @@ int main(int argc, char *argv[])
 		printf("%d\n",buf[i]);
 	}
 	printf("\n");
+
+	/*把这个数组的平均四位分给frame1_info里面的成员*/
+	
 	
 	printf("the end!\n");	//测试
 
