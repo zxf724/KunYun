@@ -25,7 +25,7 @@
 /*Pony提供的端口为31003*/
 #define PORT 31003
 
-#define BUFFER_SIZE	16	//buffer
+#define BUFFER_SIZE	4	//buffer
 
 #define DEST_FILE_NAME "./first.jpg"
 
@@ -114,7 +114,16 @@ int main(int argc, char *argv[])
 	printf("\n");
 
 	/*把这个数组的平均四位分给frame1_info里面的成员*/
-	
+	frame1_info.nWidth = buf[1];
+	frame1_info.nHeight = buf[2];
+	frame1_info.frameID = (unsigned long)buf[3];
+	frame1_info.dataLen = (unsigned long)buf[4];
+
+	/*输出*/
+	printf("frame1_info.nWidth = %d\n frame1_info.nHeight = %d\n 
+		frame1_info.frameID = %lu\n  frame1_info.dataLen = %lu \n",
+		buf[1],buf[2],buf[3],buf[4]);
+
 	
 	printf("the end!\n");	//测试
 
