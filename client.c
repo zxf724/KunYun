@@ -25,7 +25,8 @@
 /*Pony提供的端口为31003*/
 #define PORT 31003
 
-#define BUFFER_SIZE	4	//buffer
+#define BUFFER_SIZE	1024	//buffer
+#define BUFFER_PIC_SIZE 204800  //buffer for picture
 
 #define DEST_FILE_NAME "./first.jpg"
 
@@ -42,7 +43,8 @@ typedef struct _FRAME_INFO
 int main(int argc, char *argv[])
 {
 	int sockfd,recvbytes;
-	int buf[BUFFER_SIZE];
+	int buf[4];
+	char buf_pic[BUFFER_PIC_SIZE];
 	struct hostent *host;
 	struct sockaddr_in serv_addr;
 	FRAME_INFO frame1_info;
@@ -96,37 +98,44 @@ int main(int argc, char *argv[])
 
 
 	/*接收一个FRAME_INFO的大小,读出mjpeg的数据大小,根据mjpeg数据大小接收一帧mjpeg数据*/
-	
-
-	/**/
 
 	if(recvbytes = recv(sockfd,buf,BUFFER_SIZE, 0) < 0)
 	{
 		printf("recv error!\n");
 		exit(1);
 	}
-	printf("recvbytes = %d\n",recvbytes);
+	//printf("recvbytes = %d\n",recvbytes);
 
 	/*输出整形数组*/
-	for(i=0;i<=BUFFER_SIZE;i++)
+	/*for(i=0;i<=BUFFER_SIZE-1;i++)
 	{
 		printf("%d\n",buf[i]);
 	}
-	printf("\n");
+	*/
 
 	/*把这个数组的平均四位分给frame1_info里面的成员*/
-	frame1_info.nWidth = buf[1];
-	frame1_info.nHeight = buf[2];
-	frame1_info.frameID = (unsigned long)buf[3];
-	frame1_info.dataLen = (unsigned long)buf[4];
+	frame1_info.nWidth = buf[0];
+	frame1_info.nHeight = buf[1];
+	frame1_info.frameID = (unsigned long)buf[2];
+	frame1_info.dataLen = (unsigned long)buf[3];
 
 	/*输出*/
-	printf("frame1_info.nWidth = %d \nframe1_info.nHeight = %d\nframe1_info.frameID = %lu \nframe1_info.dataLen = %lu \n",buf[1],buf[2],buf[3],buf[4]);
+	printf("frame1_info.nWidth = %d \nframe1_info.nHeight = %d\nframe1_info.frameID = %lu \nframe1_info.dataLen = %lu \n",buf[0],buf[1],buf[2],buf[3]);
 
 	/*接受接下来frame1_info.datelen个字节的数据，并且放到first.jpg里面去*/
-	//if(recv = recv(sock,
+	int data_len = sizeof(frame1_info.dataLen);
 
-
+	if((recvbytes = recv(sockfd,buf_pic,data_len,0)) == -1)
+	{
+		printf("error in recv datalen!!");
+		exit(-1);				
+	}
+	
+	int buf_data;
+	if((buf_data = write(dest_file,buf_pic,data_len)) == -1)
+	{
+		printf("error in write data to dest_file!!");	
+	}	
 		
 	printf("the end!\n");	//测试
 
