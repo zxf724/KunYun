@@ -120,9 +120,7 @@ int main(int argc, char *argv[])
 	frame1_info.dataLen = (unsigned long)buf[4];
 
 	/*输出*/
-	printf("frame1_info.nWidth = %d\n frame1_info.nHeight = %d\n 
-		frame1_info.frameID = %lu\n  frame1_info.dataLen = %lu \n",
-		buf[1],buf[2],buf[3],buf[4]);
+	printf("frame1_info.nWidth = %d \nframe1_info.nHeight = %d\nframe1_info.frameID = %lu \nframe1_info.dataLen = %lu \n",buf[1],buf[2],buf[3],buf[4]);
 
 	
 	printf("the end!\n");	//测试
