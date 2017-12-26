@@ -31,8 +31,8 @@
 
 typedef struct _FRAME_INFO
 	{
-		int nWidth;					//mjpeg图片宽度
-		int nHeight;				//mjpeg图片高度
+		int nWidth;			//mjpeg图片宽度
+		int nHeight;			//mjpeg图片高度
 		unsigned long frameID;		//帧序列号
 		unsigned long dataLen;		//mjpeg数据大小
 	}FRAME_INFO;
@@ -106,6 +106,7 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 	printf("recvbytes = %d\n",recvbytes);
+
 	/*输出整形数组*/
 	for(i=0;i<=BUFFER_SIZE;i++)
 	{
@@ -122,7 +123,11 @@ int main(int argc, char *argv[])
 	/*输出*/
 	printf("frame1_info.nWidth = %d \nframe1_info.nHeight = %d\nframe1_info.frameID = %lu \nframe1_info.dataLen = %lu \n",buf[1],buf[2],buf[3],buf[4]);
 
-	
+	/*接受接下来frame1_info.datelen个字节的数据，并且放到first.jpg里面去*/
+	//if(recv = recv(sock,
+
+
+		
 	printf("the end!\n");	//测试
 
 	//close(sockfd);
