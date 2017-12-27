@@ -25,10 +25,10 @@
 /*Pony提供的端口为31003*/
 #define PORT 31003
 
-#define BUFFER_SIZE	1024	//buffer
-#define BUFFER_PIC_SIZE 204800  //buffer for picture
+#define BUFFER_SIZE	16	//buffer
+#define BUFFER_PIC_SIZE (1024*100)  //buffer for picture
 
-#define DEST_FILE_NAME "./first.jpg"
+#define DEST_FILE_NAME "./picture/ID.mjpeg"
 
 typedef struct _FRAME_INFO
 	{
@@ -74,6 +74,14 @@ int main(int argc, char *argv[])
 	}
 	printf("socked created success!\n");  //测试
 
+	/*打开第一个存储文件*/
+	if((dest_file = open(DEST_FILE_NAME,O_WRONLY|O_CREAT, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH)) == -1)
+	{
+		printf("open jpg file error\n");
+	}
+	printf("created id.mjpeg successed!!\n");	 //test!
+
+
 	/*设置 sockaddr_in 结构体中相关参数*/
 	serv_addr.sin_family = AF_INET;
 	serv_addr.sin_port = htons(PORT);
@@ -89,22 +97,14 @@ int main(int argc, char *argv[])
 	}
 	printf("connected success!\n");  //测试
 
-	/*打开第一个存储文件*/
-	if((dest_file = open(DEST_FILE_NAME,
-					O_WRONLY|O_CREAT, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH)) < 0)
-	{
-		printf("open jpg file error\n");
-	}
-
-
 	/*接收一个FRAME_INFO的大小,读出mjpeg的数据大小,根据mjpeg数据大小接收一帧mjpeg数据*/
 
-	if(recvbytes = recv(sockfd,buf,BUFFER_SIZE, 0) < 0)
+	if(recvbytes = recv(sockfd,buf,BUFFER_SIZE,0) < 0)
 	{
 		printf("recv error!\n");
 		exit(1);
 	}
-	//printf("recvbytes = %d\n",recvbytes);
+	printf("recvbytes = %d\n",recvbytes);
 
 	/*输出整形数组*/
 	/*for(i=0;i<=BUFFER_SIZE-1;i++)
@@ -122,25 +122,25 @@ int main(int argc, char *argv[])
 	/*输出*/
 	printf("frame1_info.nWidth = %d \nframe1_info.nHeight = %d\nframe1_info.frameID = %lu \nframe1_info.dataLen = %lu \n",buf[0],buf[1],buf[2],buf[3]);
 
-	/*接受接下来frame1_info.datelen个字节的数据，并且放到first.jpg里面去*/
-	int data_len = sizeof(frame1_info.dataLen);
-
-	if((recvbytes = recv(sockfd,buf_pic,data_len,0)) == -1)
+/*接受接下来frame1_info.datelen个字节的数据，并且放到first.jpg里面去*/
+	
+	//for()
+	int recvbytes_1;
+	if((recvbytes_1 = recv(sockfd,buf_pic,frame1_info.dataLen,0)) == -1)
 	{
 		printf("error in recv datalen!!");
 		exit(-1);				
 	}
 	
 	int buf_data;
-	if((buf_data = write(dest_file,buf_pic,data_len)) == -1)
+	if((buf_data = write(dest_file,buf_pic,frame1_info.dataLen)) == -1)
 	{
 		printf("error in write data to dest_file!!");	
-	}	
+	}
 		
 	printf("the end!\n");	//测试
 
-	//close(sockfd);
+	close(dest_file);
+	close(sockfd);
 	exit(0);
 }
-
-//helloworld
