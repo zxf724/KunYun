@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 		perror("socket");
 		exit(1);
 	}
-	printf("socked created success!\n");  //测试
+	printf("socked created successed!\n");  //测试
 
 	/*打开第一个存储文件*/
 	if((dest_file = open(DEST_FILE_NAME,O_WRONLY|O_CREAT, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH)) == -1)
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 		perror("connect");
 		exit(1);
 	}
-	printf("connected success!\n");  //测试
+	printf("connected successed!\n");  //测试
 
 /*接收一个FRAME_INFO的大小,读出mjpeg的数据大小,根据mjpeg数据大小接收一帧mjpeg数据*/
 	int recvbytes;
@@ -122,20 +122,32 @@ int main(int argc, char *argv[])
 
 /*接受接下来frame1_info.datelen个字节的数据，并且放到first.jpg里面去*/
 	
-	//for()
 	int recvbytes_1;
+	int buf_data;
+	for(i=0;i<=frame1_info.dataLen;i++)
+	{
+		if((recv(sockfd,buf_pic,1,0))==-1)
+		{
+			printf("error in recv dataLen!!");
+		}
+		if((buf_data = write(dest_file,buf_pic,1)) == -1)
+		{
+			printf("error in recv datalen");
+		}
+	}
+	/*
 	if((recvbytes_1 = recv(sockfd,buf_pic,frame1_info.dataLen,0)) == -1)
 	{
 		printf("error in recv datalen!!");
 		exit(-1);				
 	}
 	
-	int buf_data;
 	if((buf_data = write(dest_file,buf_pic,frame1_info.dataLen)) == -1)
 	{
 		printf("error in write data to dest_file!!");	
 	}
-		
+	
+	*/	
 	printf("the end!\n");	//测试
 
 	close(dest_file);
