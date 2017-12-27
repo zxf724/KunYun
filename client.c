@@ -25,7 +25,7 @@
 /*Pony提供的端口为31003*/
 #define PORT 31003
 
-#define BUFFER_SIZE	16	//buffer
+#define BUFFER_SIZE	24	//buffer for frame_info
 #define BUFFER_PIC_SIZE (1024*100)  //buffer for picture
 
 #define DEST_FILE_NAME "./picture/ID.mjpeg"
@@ -38,11 +38,9 @@ typedef struct _FRAME_INFO
 		unsigned long dataLen;		//mjpeg数据大小
 	}FRAME_INFO;
 
-
-
 int main(int argc, char *argv[])
 {
-	int sockfd,recvbytes;
+	int sockfd;
 	int buf[4];
 	char buf_pic[BUFFER_PIC_SIZE];
 	struct hostent *host;
@@ -97,9 +95,9 @@ int main(int argc, char *argv[])
 	}
 	printf("connected success!\n");  //测试
 
-	/*接收一个FRAME_INFO的大小,读出mjpeg的数据大小,根据mjpeg数据大小接收一帧mjpeg数据*/
-
-	if(recvbytes = recv(sockfd,buf,BUFFER_SIZE,0) < 0)
+/*接收一个FRAME_INFO的大小,读出mjpeg的数据大小,根据mjpeg数据大小接收一帧mjpeg数据*/
+	int recvbytes;
+	if((recvbytes = recv(sockfd,buf,sizeof(buf),0)) == -1)
 	{
 		printf("recv error!\n");
 		exit(1);
