@@ -49,16 +49,6 @@ int main(int argc, char *argv[])
 	int dest_file;
 	int i;		//局部变量
 
-	/*设置读缓存大小*/
-/*
-	int buflen = 65536*10;	
-	
-	if(0 != setsockopt(m_sendUdpSock,SOL_SOCKET,SO_RCVBUF,&buflen,4))
-	{
-		return OS_ERROR;
-	}
-*/
-
 	if(argc < 2)
 	{
 		fprintf(stderr,"usage: ./client Hostname(or ip address)\n");
@@ -136,19 +126,6 @@ int main(int argc, char *argv[])
 
 
 	/*接受接下来frame1_info.datelen个字节的数据，并且放到first.jpg里面去*/
-	/*	for(i=0;i<frame1_info.dataLen;i+=1)
-		{
-			if(revcbytes = (recv(sockfd,buf_pic,1,0)) == -1)
-			{
-				printf("error in recv dataLen!!");
-			}
-			if((buf_data = write(dest_file,buf_pic,1)) == -1)
-			{
-				printf("error in recv datalen");
-			}
-		}
-	
-	*/
 	if((recv(sockfd,buf_pic,frame1_info.dataLen,MSG_WAITALL)) == -1)
 		{
 			printf("error in recv dataLen!!");
@@ -158,7 +135,6 @@ int main(int argc, char *argv[])
 		{
 			printf("error in recv datalen");
 		}
-	
 
 	printf("the end!\n");	//测试
 	close(dest_file);
