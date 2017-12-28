@@ -26,6 +26,7 @@
 #define PORT 31003
 #define BUFFER_PIC_SIZE (1024*100)  //buffer for picture
 #define FILE_NAME(i) (i)
+#define TALL_NUM	(1024*1024)
 
 
 typedef struct _FRAME_INFO
@@ -47,6 +48,16 @@ int main(int argc, char *argv[])
 
 	int dest_file;
 	int i;		//局部变量
+
+	/*设置读缓存大小*/
+/*
+	int buflen = 65536*10;	
+	
+	if(0 != setsockopt(m_sendUdpSock,SOL_SOCKET,SO_RCVBUF,&buflen,4))
+	{
+		return OS_ERROR;
+	}
+*/
 
 	if(argc < 2)
 	{
@@ -90,17 +101,12 @@ int main(int argc, char *argv[])
 	int recvbytes;
 	int recvbytes_1;
 	int buf_data;
-	
+	int j;	
+
 	FILE *fp;
 		
-	while(1)
+	for(j=1;j<=TALL_NUM;j++)
 	{
-
-	/*	if((dest_file = open("./picture/p",O_WRONLY|O_CREAT, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH)) == -1)
-		{
-			printf("open jpg file error\n");
-		}
-	*/
 		if((recvbytes = recv(sockfd,buf,sizeof(buf),0)) == -1)
 		{
 			printf("recv error!\n");
@@ -117,12 +123,11 @@ int main(int argc, char *argv[])
 		/*输出*/
 		printf("frame1_info.nWidth = %d \nframe1_info.nHeight = %d\nframe1_info.frameID = %lu \nframe1_info.dataLen = %lu \n",buf[0],buf[1],buf[2],buf[3]);
 
-		/*open file*/
-
 		char file_num[16];
 		int dest_file;
-		
-		sprintf(file_num,"./picture/pic_%d.mjpeg",frame1_info.dataLen);
+		int revcbytes;		
+
+		sprintf(file_num,"./picture/NUM_%d.jpeg",j);
 
 		if((dest_file = open(FILE_NAME(file_num),O_WRONLY|O_CREAT, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH)) == -1)
 		{
@@ -131,10 +136,9 @@ int main(int argc, char *argv[])
 
 
 	/*接受接下来frame1_info.datelen个字节的数据，并且放到first.jpg里面去*/
-	
-		for(i=0;i<frame1_info.dataLen;i++)
+	/*	for(i=0;i<frame1_info.dataLen;i+=1)
 		{
-			if((recv(sockfd,buf_pic,1,0))==-1)
+			if(revcbytes = (recv(sockfd,buf_pic,1,0)) == -1)
 			{
 				printf("error in recv dataLen!!");
 			}
@@ -143,6 +147,18 @@ int main(int argc, char *argv[])
 				printf("error in recv datalen");
 			}
 		}
+	
+	*/
+	if((recv(sockfd,buf_pic,frame1_info.dataLen,MSG_WAITALL)) == -1)
+		{
+			printf("error in recv dataLen!!");
+		}
+
+		if((buf_data = write(dest_file,buf_pic,frame1_info.dataLen)) == -1)
+		{
+			printf("error in recv datalen");
+		}
+	
 
 	printf("the end!\n");	//测试
 	close(dest_file);
