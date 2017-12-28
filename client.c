@@ -1,7 +1,7 @@
 /*
 *Function：Service_InPc.c  任务是在树莓派里面，这里先在pc里面实现。
 *Description：这个函数用来捕捉31003端口的mjpeg流。
-*     具体网络接收时可以先接收一个FRAME_INFO大小的包，读出mjpeg的数据大小，然后根据mjpeg数据大小接收一帧mjpeg数据。
+*具体网络接收时可以先接收一个FRAME_INFO大小的包，读出mjpeg的数据大小，然后根据mjpeg数据大小接收一帧mjpeg数据。
 *	  FRAME_INFO也就是其数据格式
 *Name：温怀雄
 *Date：2017/12/20
@@ -24,11 +24,10 @@
 
 /*Pony提供的端口为31003*/
 #define PORT 31003
-
-#define BUFFER_SIZE	24	//buffer for frame_info
 #define BUFFER_PIC_SIZE (1024*100)  //buffer for picture
+#define FILE_NAME(i) (i)
+#define TALL_NUM	(1024*1024)
 
-#define DEST_FILE_NAME "./picture/ID.mjpeg"
 
 typedef struct _FRAME_INFO
 	{
@@ -70,15 +69,7 @@ int main(int argc, char *argv[])
 		perror("socket");
 		exit(1);
 	}
-	printf("socked created success!\n");  //测试
-
-	/*打开第一个存储文件*/
-	if((dest_file = open(DEST_FILE_NAME,O_WRONLY|O_CREAT, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH)) == -1)
-	{
-		printf("open jpg file error\n");
-	}
-	printf("created id.mjpeg successed!!\n");	 //test!
-
+	printf("socked created successed!\n");  //测试
 
 	/*设置 sockaddr_in 结构体中相关参数*/
 	serv_addr.sin_family = AF_INET;
@@ -93,52 +84,62 @@ int main(int argc, char *argv[])
 		perror("connect");
 		exit(1);
 	}
-	printf("connected success!\n");  //测试
+	printf("connected successed!\n");  //测试
 
 /*接收一个FRAME_INFO的大小,读出mjpeg的数据大小,根据mjpeg数据大小接收一帧mjpeg数据*/
+
 	int recvbytes;
-	if((recvbytes = recv(sockfd,buf,sizeof(buf),0)) == -1)
-	{
-		printf("recv error!\n");
-		exit(1);
-	}
-	printf("recvbytes = %d\n",recvbytes);
-
-	/*输出整形数组*/
-	/*for(i=0;i<=BUFFER_SIZE-1;i++)
-	{
-		printf("%d\n",buf[i]);
-	}
-	*/
-
-	/*把这个数组的平均四位分给frame1_info里面的成员*/
-	frame1_info.nWidth = buf[0];
-	frame1_info.nHeight = buf[1];
-	frame1_info.frameID = (unsigned long)buf[2];
-	frame1_info.dataLen = (unsigned long)buf[3];
-
-	/*输出*/
-	printf("frame1_info.nWidth = %d \nframe1_info.nHeight = %d\nframe1_info.frameID = %lu \nframe1_info.dataLen = %lu \n",buf[0],buf[1],buf[2],buf[3]);
-
-/*接受接下来frame1_info.datelen个字节的数据，并且放到first.jpg里面去*/
-	
-	//for()
 	int recvbytes_1;
-	if((recvbytes_1 = recv(sockfd,buf_pic,frame1_info.dataLen,0)) == -1)
-	{
-		printf("error in recv datalen!!");
-		exit(-1);				
-	}
-	
 	int buf_data;
-	if((buf_data = write(dest_file,buf_pic,frame1_info.dataLen)) == -1)
-	{
-		printf("error in write data to dest_file!!");	
-	}
-		
-	printf("the end!\n");	//测试
+	int j;	
 
+	FILE *fp;
+		
+	for(j=1;j<=TALL_NUM;j++)
+	{
+		if((recvbytes = recv(sockfd,buf,sizeof(buf),0)) == -1)
+		{
+			printf("recv error!\n");
+			exit(1);
+		}
+		printf("recvbytes = %d\n",recvbytes);
+
+		/*把这个数组的平均四位分给frame1_info里面的成员*/
+		frame1_info.nWidth = buf[0];
+		frame1_info.nHeight = buf[1];
+		frame1_info.frameID = (unsigned long)buf[2];
+		frame1_info.dataLen = (unsigned long)buf[3];
+	
+		/*输出*/
+		printf("frame1_info.nWidth = %d \nframe1_info.nHeight = %d\nframe1_info.frameID = %lu \nframe1_info.dataLen = %lu \n",buf[0],buf[1],buf[2],buf[3]);
+
+		char file_num[16];
+		int dest_file;
+		int revcbytes;		
+
+		sprintf(file_num,"./picture/NUM_%d.jpeg",j);
+
+		if((dest_file = open(FILE_NAME(file_num),O_WRONLY|O_CREAT, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH)) == -1)
+		{
+			printf("open jpg file error\n");
+		}
+
+
+	/*接受接下来frame1_info.datelen个字节的数据，并且放到first.jpg里面去*/
+	if((recv(sockfd,buf_pic,frame1_info.dataLen,MSG_WAITALL)) == -1)
+		{
+			printf("error in recv dataLen!!");
+		}
+
+		if((buf_data = write(dest_file,buf_pic,frame1_info.dataLen)) == -1)
+		{
+			printf("error in recv datalen");
+		}
+
+	printf("the end!\n");	//测试
 	close(dest_file);
+	} //end of while
+
 	close(sockfd);
 	exit(0);
 }
