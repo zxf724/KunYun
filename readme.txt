@@ -16,4 +16,4 @@ Dear wen：
 hugh@poya.com.cn
 
 
-visio2016产品密钥：W9WC2-JN9W2-H4CBV-24QR7-M4HB8
+open app.path & "\" & text21.text & "\资产分类.txt"
