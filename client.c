@@ -91,12 +91,23 @@ int main(int argc, char *argv[])
 	int recvbytes;
 	int recvbytes_1;
 	int buf_data;
+<<<<<<< HEAD
 	int j;	
 
 	FILE *fp;
 		
 	for(j=1;j<=TALL_NUM;j++)
 	{
+=======
+	int j = 0;	
+
+	FILE *fp;
+		
+	while(1)
+	{
+		j++;
+
+>>>>>>> fcfb8c1fb1629612db3d9ef87e7f265ddbc72773
 		if((recvbytes = recv(sockfd,buf,sizeof(buf),0)) == -1)
 		{
 			printf("recv error!\n");
@@ -111,7 +122,12 @@ int main(int argc, char *argv[])
 		frame1_info.dataLen = (unsigned long)buf[3];
 	
 		/*输出*/
+<<<<<<< HEAD
 		printf("frame1_info.nWidth = %d \nframe1_info.nHeight = %d\nframe1_info.frameID = %lu \nframe1_info.dataLen = %lu \n",buf[0],buf[1],buf[2],buf[3]);
+=======
+		printf("frame1_info.nWidth = %d \nframe1_info.nHeight = %d\n"
+			"frame1_info.frameID = %lu \nframe1_info.dataLen = %lu \n",buf[0],buf[1],buf[2],buf[3]);
+>>>>>>> fcfb8c1fb1629612db3d9ef87e7f265ddbc72773
 
 		char file_num[16];
 		int dest_file;
